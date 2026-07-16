@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>お絵描きアプリ</title>
+  <title>Dessin</title>
   <style>
     body {
       margin: 0;
@@ -15,12 +15,15 @@
       display: block;
       background: #fff;
       cursor: crosshair;
+      canvas {
+      touch-action: none;
+}
     }
     .toolbar {
       position: fixed;
       top: 10px;
       left: 10px;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.4);
       padding: 10px 15px;
       border-radius: 10px;
     }
@@ -32,9 +35,9 @@
 </head>
 <body>
   <div class="toolbar">
-    色: <input type="color" id="colorPicker" value="#000000">
-    太さ: <input type="range" id="sizePicker" min="1" max="50" value="5">
-    <button id="clearBtn">クリア</button>
+    Color: <input type="color" id="colorPicker" value="#000000">
+    Brush Size: <input type="range" id="sizePicker" min="1" max="50" value="5">
+    <button id="clearBtn">Clear</button>
   </div>
   <canvas id="canvas"></canvas>
 
@@ -42,15 +45,12 @@
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    // キャンバスのサイズを画面いっぱいに
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
 
-    // ツール設定
     const colorPicker = document.getElementById('colorPicker');
     const sizePicker = document.getElementById('sizePicker');
     const clearBtn = document.getElementById('clearBtn');
@@ -61,15 +61,15 @@
 
     let drawing = false;
 
-    canvas.addEventListener('mousedown', (e) => {
+    canvas.addEventListener('pointerdown', (e) => {
       drawing = true;
       ctx.beginPath();
-      ctx.moveTo(e.clientX, e.clientY);
+      ctx.moveTo(e.offsetX, e.offsetY);
     });
 
-    canvas.addEventListener('mousemove', (e) => {
+    canvas.addEventListener('pointermove', (e) => {
       if (!drawing) return;
-      ctx.lineTo(e.clientX, e.clientY);
+      ctx.lineTo(e.offsetX, e.offsetY);
       ctx.strokeStyle = colorPicker.value;
       ctx.lineWidth = sizePicker.value;
       ctx.lineCap = "round";
@@ -77,8 +77,9 @@
       ctx.stroke();
     });
 
-    canvas.addEventListener('mouseup', () => drawing = false);
-    canvas.addEventListener('mouseleave', () => drawing = false);
+    canvas.addEventListener('pointerup', () => drawing = false);
+    canvas.addEventListener('pointerleave', () => drawing = false);
+    canvas.addEventListener('pointercancel', () => drawing = false);
   </script>
 </body>
 </html>
